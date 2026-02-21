@@ -1,0 +1,62 @@
+{
+  "skill_name": "orchestrate",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "What should I work on next?",
+      "expected_output": "Reads existing PROGRESS.md, reconciles against git history, selects the highest-priority actionable item with clear reasoning, does NOT attempt to glob the entire codebase",
+      "files": [],
+      "context": {
+        "project_dir": "/home/astrosteveo/Projects/working-title",
+        "has_progress_md": true,
+        "note": "Real C++ game engine project with existing PROGRESS.md, defined priorities, and rich git history"
+      },
+      "expectations": [
+        "Reads .claude/PROGRESS.md or recognizes its content was already injected by the SessionStart hook",
+        "Checks git log to reconcile recent commits against PROGRESS.md state",
+        "Does NOT run Glob(**/*) or attempt to scan the entire file tree",
+        "Selects a specific item to work on from the priority list rather than presenting a menu of options",
+        "Provides concrete reasoning for why that item was chosen (unblocked, well-defined, high-impact)",
+        "Offers to begin execution rather than just reporting"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Pick up this project and figure out what's going on",
+      "expected_output": "Orients to the project by reading PROGRESS.md and git history, provides a coherent summary of current state, identifies what's actionable",
+      "files": [],
+      "context": {
+        "project_dir": "/home/astrosteveo/Projects/working-title",
+        "has_progress_md": true,
+        "note": "Real C++ game engine project with existing PROGRESS.md"
+      },
+      "expectations": [
+        "Reads PROGRESS.md as the primary source of project state",
+        "Checks git log to verify state is current and identify any drift",
+        "Provides a coherent summary that shows understanding of the project, not just a regurgitation of PROGRESS.md",
+        "Identifies in-progress or stalled items if any exist",
+        "Distinguishes between what's actionable now vs what's blocked or deferred",
+        "Updates PROGRESS.md if drift is detected, or explicitly states no drift found"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Review the known issues section and propose a fix for the hardcoded apply_component() chain in world.cpp",
+      "expected_output": "Identifies the specific known issue, reads the relevant code, proposes a concrete solution, assesses scope before diving in",
+      "files": [],
+      "context": {
+        "project_dir": "/home/astrosteveo/Projects/working-title",
+        "has_progress_md": true,
+        "note": "Known issue: World::apply_component() in world.cpp:83-204 is a hardcoded if/else chain"
+      },
+      "expectations": [
+        "Reads PROGRESS.md and identifies the known issue about apply_component()",
+        "Reads the actual code at world.cpp to understand the current implementation",
+        "Assesses scope — this is a focused refactoring task, not a multi-system change",
+        "Proposes a concrete approach that fits the project's existing patterns (C++20, ECS, data-driven design)",
+        "Does NOT spin up a team or use TeamCreate for a focused single-file refactoring task",
+        "Plans to update PROGRESS.md after the work"
+      ]
+    }
+  ]
+}
