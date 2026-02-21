@@ -1,0 +1,127 @@
+{
+  "expectations": [
+    {
+      "text": "Reads PROGRESS.md as the primary source of project state",
+      "passed": true,
+      "evidence": "Step 1 reads PROGRESS.md as the very first action: 'Read the project's PROGRESS.md to establish context.' It extracts project description, architecture, 18 completed items, known issues, and next-up items. The skill explicitly treats this as the primary state source, with git log as secondary verification."
+    },
+    {
+      "text": "Checks git log to verify state is current and identify any drift",
+      "passed": true,
+      "evidence": "Step 2 runs 'git log --oneline -20' and compares all 10 commits against PROGRESS.md completed items: 'All 10 commits align directly with items listed in the Completed section of PROGRESS.md.' Steps 3-4 go further with 'git status' and 'git diff --stat' and 'git diff', discovering uncommitted work (5 new test files + CMakeLists.txt + PROGRESS.md updates) that represents the test coverage expansion iteration. Step 5 checks branches with 'git branch -a'. This is thorough reconciliation."
+    },
+    {
+      "text": "Provides a coherent summary that shows understanding of the project, not just a regurgitation of PROGRESS.md",
+      "passed": true,
+      "evidence": "Step 7 synthesizes original analysis: 'Working Title is a C++ game engine building toward a Dwarf Fortress-style life simulation. It is in active, iterative development -- 10 commits of feature work spanning core infrastructure through AI and UI.' It connects the apply_component() known issue to the upcoming social memory feature: 'will matter for the social memory feature if it introduces new component types.' It characterizes deferred items with specific blocking reasons. The Final Result also synthesizes: '38 tests passing, architecture is clean.' These are judgments not found in PROGRESS.md."
+    },
+    {
+      "text": "Identifies in-progress or stalled items if any exist",
+      "passed": true,
+      "evidence": "Steps 3-4 identify uncommitted test coverage expansion work: 'the most recent completed work (test coverage expansion) was documented in PROGRESS.md but never committed. The PROGRESS.md on disk is ahead of the last commit.' Step 7 flags it as requiring immediate action: 'This work should be committed -- it represents a complete, self-contained iteration.' The user_notes.md also flags the persistent apply_component() known issue: 'has been sitting across multiple sessions.'"
+    },
+    {
+      "text": "Distinguishes between what's actionable now vs what's blocked or deferred",
+      "passed": true,
+      "evidence": "Step 7 creates three explicit tiers: (1) Immediate: 'commit the uncommitted test coverage expansion work'; (2) Actionable: 'Social memory AI decisions [I:3 U:4 E:3 = 2.33] -- This is the highest-priority unblocked item... Dependencies are met (memory-informed AI is done)'; (3) Deferred: 'Building/placement system (E:4, needs design work)' and 'Save/load system (E:4, needs stable entity ID management design)' with explicit label 'Deferred items (not actionable now).'"
+    },
+    {
+      "text": "Updates PROGRESS.md if drift is detected, or explicitly states no drift found",
+      "passed": true,
+      "evidence": "Step 2 states: 'All 10 commits align directly with items listed in the Completed section of PROGRESS.md. No drift detected between commit history and completed items.' Step 8 elaborates: 'No items need to move between sections -- PROGRESS.md already accurately reflects completed work (including the uncommitted test expansion).' The executor identifies that PROGRESS.md is ahead of the last commit (reverse drift) but its content is accurate, so no update is needed. The eval was READ-ONLY, but the executor explicitly documents: 'Since this is a READ-ONLY eval, no files were modified' and describes what it would do if executing for real."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Read": 4,
+      "Write": 3,
+      "Bash": 7,
+      "Edit": 0,
+      "Glob": 2,
+      "Grep": 0
+    },
+    "total_tool_calls": 16,
+    "total_steps": 8,
+    "errors_encountered": 0,
+    "output_chars": 12866,
+    "transcript_chars": 10009
+  },
+  "timing": null,
+  "claims": [
+    {
+      "claim": "All 10 commits align directly with items listed in the Completed section of PROGRESS.md",
+      "type": "factual",
+      "verified": "unverifiable",
+      "evidence": "The transcript lists 10 commits and states they all match PROGRESS.md completed items. Without access to the actual PROGRESS.md and git repo, I cannot independently verify the mapping. However, the executor listed both the commit messages and described the PROGRESS.md contents in enough detail to make the claim plausible."
+    },
+    {
+      "claim": "The uncommitted changes represent the 'Expanded test coverage' work -- 5 new test files, 38 cases, 179 assertions, 9 files",
+      "type": "factual",
+      "verified": "unverifiable",
+      "evidence": "The transcript describes reading git diff output that shows these specific numbers and files. Without access to the actual repo, I cannot independently verify, but the claim is internally consistent across Steps 3, 4, and the Final Result."
+    },
+    {
+      "claim": "Social memory AI decisions has dependencies met (memory-informed AI is done)",
+      "type": "factual",
+      "verified": true,
+      "evidence": "The transcript shows the most recent commit is 'aed68ba Iteration 5: memory-informed AI decisions (spatial memory)' which is listed as the last committed work. PROGRESS.md lists this in Completed. The claim that this dependency is met is consistent with the evidence."
+    },
+    {
+      "claim": "There is no README, CLAUDE.md, or CONTRIBUTING.md",
+      "type": "factual",
+      "verified": "unverifiable",
+      "evidence": "Step 6 states the executor ran 'ls' and found none of these files. Cannot independently verify without repo access, but the claim is stated as the result of a specific tool invocation."
+    },
+    {
+      "claim": "Only one branch exists (master), no remote tracking branches",
+      "type": "factual",
+      "verified": "unverifiable",
+      "evidence": "Step 5 states executor ran 'git branch -a' and found only master. Consistent with the project description as a local-only project."
+    },
+    {
+      "claim": "The skill hardcodes .claude/PROGRESS.md but the project stores it at the root",
+      "type": "process",
+      "verified": true,
+      "evidence": "Step 1 explicitly notes this mismatch and the Issues section reiterates it. The user_notes.md Workarounds section confirms: 'Read PROGRESS.md from /home/astrosteveo/Projects/working-title/PROGRESS.md instead of .claude/PROGRESS.md as the skill instructs.' This is a genuine observation about skill design."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [
+      "Skill hardcodes .claude/PROGRESS.md location but project uses root /PROGRESS.md -- unclear if SessionStart hook would find it",
+      "Uncommitted test files not verified to compile or pass (READ-ONLY eval constraint)"
+    ],
+    "needs_review": [
+      "Scoring system notation [I:x U:x E:x = score] is undocumented -- formula unclear, could cause prioritization confusion if more items are added",
+      "Deferred items numbering starts at 3 (cosmetic but potentially confusing)"
+    ],
+    "workarounds": [
+      "Read PROGRESS.md from project root instead of .claude/PROGRESS.md as skill instructs",
+      "No hook injection available in eval, so read PROGRESS.md directly as fallback"
+    ]
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "Updates PROGRESS.md if drift is detected, or explicitly states no drift found",
+        "reason": "This assertion has an escape hatch ('or explicitly states no drift found') that makes it easy to pass without actually updating anything. In this eval, the executor passed by stating no content drift was found. A stronger test would use a repo where PROGRESS.md is genuinely stale (e.g., a commit exists that is NOT reflected in PROGRESS.md), forcing the executor to actually update the file. The current test scenario happened to have PROGRESS.md ahead of git, which is the less interesting drift direction."
+      },
+      {
+        "assertion": "Checks git log to verify state is current and identify any drift",
+        "reason": "This assertion passes if the executor runs git log at all. It does not verify that the executor actually cross-references specific commits against specific PROGRESS.md entries. In this case the executor did a thorough job, but a weaker execution that just ran 'git log' and said 'looks fine' would also pass."
+      },
+      {
+        "reason": "No assertion checks whether the executor identified the PROGRESS.md location mismatch (skill expects .claude/PROGRESS.md, project uses root). This was a significant finding that reveals a real skill design issue. An assertion like 'Identifies discrepancies between skill assumptions and project structure' would catch this."
+      },
+      {
+        "reason": "No assertion checks the quality of the user_notes.md output, which in this case contained substantive suggestions for skill improvement (configurable PROGRESS.md path, policy for uncommitted work, stale known-issue flagging). The user_notes captured things the main summary did not."
+      }
+    ],
+    "overall": "The assertions cover the core workflow phases well and the executor performed genuinely thorough work. The main gap is that assertion 6 (drift detection/update) would benefit from a test case where PROGRESS.md is actually stale relative to git, forcing a real update rather than a 'no drift found' statement. The assertions also lean toward checking that steps were performed rather than checking the quality of their output."
+  }
+}
