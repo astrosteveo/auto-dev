@@ -25,12 +25,19 @@ changes. Your role is everything in between.
 
 ## Phase 1: Establish Context
 
-Read `.claude/PROGRESS.md`. The SessionStart hook may have already injected
-it — check your context before reading the file again.
+Look for project state in this order:
+
+1. Check whether the SessionStart hook already injected PROGRESS.md into your
+   context — if so, you already have it.
+2. Read `.claude/PROGRESS.md` (the canonical location the hook expects).
+3. If not there, check for `PROGRESS.md` at the project root (some projects
+   store it there). If you find it at the root, use it — but when you next
+   update it, move it to `.claude/PROGRESS.md` so the SessionStart hook can
+   find it in future sessions.
 
 **If PROGRESS.md exists:** you have project state. Move to Phase 2.
 
-**If PROGRESS.md doesn't exist:** this is a first-time orchestration.
+**If PROGRESS.md doesn't exist anywhere:** this is a first-time orchestration.
 Bootstrap it:
 
 1. **Recent history** — `git log --oneline -20` to understand what's been

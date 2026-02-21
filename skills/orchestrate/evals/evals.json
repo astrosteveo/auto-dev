@@ -4,58 +4,59 @@
     {
       "id": 1,
       "prompt": "What should I work on next?",
-      "expected_output": "Reads existing PROGRESS.md, reconciles against git history, selects the highest-priority actionable item with clear reasoning, does NOT attempt to glob the entire codebase",
+      "expected_output": "Reads existing PROGRESS.md, reconciles against git history, selects the highest-priority actionable item with clear reasoning and a concrete execution plan",
       "files": [],
       "context": {
         "project_dir": "/home/astrosteveo/Projects/working-title",
         "has_progress_md": true,
-        "note": "Real C++ game engine project with existing PROGRESS.md, defined priorities, and rich git history"
+        "note": "Real C++ game engine project with existing PROGRESS.md at root (not .claude/), defined priorities, and rich git history. Only one item in Next Up but deferred items and a known issue also exist."
       },
       "expectations": [
-        "Reads .claude/PROGRESS.md or recognizes its content was already injected by the SessionStart hook",
+        "Finds PROGRESS.md even though it's at the project root instead of .claude/PROGRESS.md",
         "Checks git log to reconcile recent commits against PROGRESS.md state",
+        "Detects uncommitted changes via git status and accounts for them in its assessment",
         "Does NOT run Glob(**/*) or attempt to scan the entire file tree",
-        "Selects a specific item to work on from the priority list rather than presenting a menu of options",
-        "Provides concrete reasoning for why that item was chosen (unblocked, well-defined, high-impact)",
-        "Offers to begin execution rather than just reporting"
+        "Selects a specific item to work on rather than presenting a menu of options",
+        "Provides a concrete execution plan with specific steps, not just a high-level recommendation",
+        "Notes that PROGRESS.md should be moved to .claude/PROGRESS.md for SessionStart hook compatibility"
       ]
     },
     {
       "id": 2,
       "prompt": "Pick up this project and figure out what's going on",
-      "expected_output": "Orients to the project by reading PROGRESS.md and git history, provides a coherent summary of current state, identifies what's actionable",
+      "expected_output": "Orients to the project by reading PROGRESS.md and git history, provides a synthesis that goes beyond restating PROGRESS.md, identifies what's actionable vs blocked",
       "files": [],
       "context": {
         "project_dir": "/home/astrosteveo/Projects/working-title",
         "has_progress_md": true,
-        "note": "Real C++ game engine project with existing PROGRESS.md"
+        "note": "Real C++ game engine project with existing PROGRESS.md at root. Has uncommitted test files from a previous session."
       },
       "expectations": [
-        "Reads PROGRESS.md as the primary source of project state",
-        "Checks git log to verify state is current and identify any drift",
-        "Provides a coherent summary that shows understanding of the project, not just a regurgitation of PROGRESS.md",
-        "Identifies in-progress or stalled items if any exist",
-        "Distinguishes between what's actionable now vs what's blocked or deferred",
-        "Updates PROGRESS.md if drift is detected, or explicitly states no drift found"
+        "Finds PROGRESS.md at the project root and uses it as the primary source of project state",
+        "Checks git log AND git status to build a complete picture of current state",
+        "Surfaces the uncommitted changes from the previous session as something that needs attention",
+        "Provides original analysis that synthesizes PROGRESS.md content rather than just restating it (e.g., connecting related items, identifying patterns, noting the project's development trajectory)",
+        "Explicitly categorizes items into actionable-now vs blocked/deferred with reasons for each",
+        "Notes the PROGRESS.md path mismatch with the skill's expected .claude/ location"
       ]
     },
     {
       "id": 3,
       "prompt": "Review the known issues section and propose a fix for the hardcoded apply_component() chain in world.cpp",
-      "expected_output": "Identifies the specific known issue, reads the relevant code, proposes a concrete solution, assesses scope before diving in",
+      "expected_output": "Identifies the specific known issue, reads the relevant code, produces a concrete technical proposal that demonstrates understanding of both the problem and the project's patterns",
       "files": [],
       "context": {
         "project_dir": "/home/astrosteveo/Projects/working-title",
         "has_progress_md": true,
-        "note": "Known issue: World::apply_component() in world.cpp:83-204 is a hardcoded if/else chain"
+        "note": "Known issue: World::apply_component() in world.cpp:83-204 is a hardcoded if/else chain. Project uses C++20, Flecs ECS, data-driven design."
       },
       "expectations": [
         "Reads PROGRESS.md and identifies the known issue about apply_component()",
-        "Reads the actual code at world.cpp to understand the current implementation",
-        "Assesses scope — this is a focused refactoring task, not a multi-system change",
-        "Proposes a concrete approach that fits the project's existing patterns (C++20, ECS, data-driven design)",
-        "Does NOT spin up a team or use TeamCreate for a focused single-file refactoring task",
-        "Plans to update PROGRESS.md after the work"
+        "Reads the actual code at world.cpp to understand the current implementation before proposing anything",
+        "Assesses scope as a focused refactoring task and does NOT spin up a team or use TeamCreate",
+        "Produces a written proposal (in an output file) that includes actual code, not just a description of what to do",
+        "The proposal references all 12 component types from the existing code and handles each one",
+        "The proposed approach fits the project's existing patterns — uses C++20 features, works with Flecs ECS API, and aligns with the data-driven design philosophy"
       ]
     }
   ]
