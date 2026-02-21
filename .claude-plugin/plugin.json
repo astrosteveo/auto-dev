@@ -1,7 +1,6 @@
 {
   "name": "auto-dev",
-  "version": "0.1.0",
-  "description": "Autonomous development loop — maintains project state, auto-commits at meaningful boundaries, and orchestrates task execution with team-based agents.",
+  "description": "Autonomous development loop with project state management and task orchestration",
   "author": {
     "name": "Steven Mosley",
     "email": "stevengmjr@gmail.com"
@@ -16,7 +15,5 @@
     "orchestration",
     "state-management",
     "auto-commit"
-  ],
-  "skills": "./skills/",
-  "hooks": "./hooks/hooks.json"
+  ]
 }
