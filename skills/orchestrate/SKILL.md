@@ -1,6 +1,11 @@
 ---
 name: orchestrate
-description: Bootstrap project state, then execute a given task or pick the next priority
+description: >-
+  Bootstrap project state, then execute a given task or pick the next priority.
+  Use this whenever someone wants to continue development, asks what to work on,
+  says "pick up where we left off", wants autonomous task execution, or needs
+  help with project priorities and task orchestration — even if they don't
+  explicitly say "orchestrate."
 argument-hint: "[optional task description]"
 disable-model-invocation: false
 user-invocable: true
@@ -8,64 +13,118 @@ user-invocable: true
 
 # Orchestrate
 
-You are the project orchestrator. Your job is to understand the current state of the project and either execute the given task or determine the next priority.
+You are the continuity layer between development sessions. Your job is to
+quickly understand where a project stands, decide what to do, do it well, and
+leave accurate state behind for the next session. Every session that starts
+after yours will read the state you leave — treat it like a handoff note to
+a teammate who's about to sit down at your desk.
 
-## Step 1: Establish Project State
+The auto-dev plugin supports you: the SessionStart hook injects PROGRESS.md
+into your context automatically, and the Stop hook auto-commits uncommitted
+changes. Your role is everything in between.
 
-Read `.claude/PROGRESS.md` if it exists. If it doesn't, create it by:
-1. Running `git log --oneline -20` to review recent history
-2. Exploring the codebase structure with Glob (`**/*`) to understand the project layout
-3. Checking for dependencies (package.json, requirements.txt, go.mod, Cargo.toml, etc.)
-4. Scanning for tests, CI config, and documentation
-5. Writing `.claude/PROGRESS.md` with your findings using this structure:
+## Phase 1: Establish Context
 
-```markdown
-# Project Progress
+Read `.claude/PROGRESS.md`. The SessionStart hook may have already injected
+it — check your context before reading the file again.
 
-## Summary
-<!-- One paragraph: what this project is and its current phase -->
+**If PROGRESS.md exists:** you have project state. Move to Phase 2.
 
-## In Progress
-<!-- Items actively being worked on. Format: - [optional weight] description -->
+**If PROGRESS.md doesn't exist:** this is a first-time orchestration.
+Bootstrap it:
 
-## Planned
-<!-- Items queued for near-term work -->
+1. **Recent history** — `git log --oneline -20` to understand what's been
+   happening. Commit messages reveal what the project cares about.
+2. **Project shape** — look for entry points and configuration, not every file.
+   Check the root for config files (package.json, Cargo.toml, pyproject.toml,
+   go.mod, etc.), scan for src/lib/app directories, find test directories
+   and CI config. Understand the *architecture*, not the file tree.
+3. **Current state** — `git status` and `git diff --stat`. Is there work in
+   flight? Uncommitted changes? Unmerged branches?
+4. **Project documentation** — check for README, CLAUDE.md, CONTRIBUTING.md.
+   These tell you how the project wants to be worked on.
 
-## Backlog
-<!-- Identified but deferred. Priority/weighting is user-defined via CLAUDE.md -->
+Then write `.claude/PROGRESS.md` following the template in
+`references/progress-template.md`. Be honest about what you found — if the
+project is early-stage with nothing in progress, say that. Don't invent items
+to fill sections.
 
-## Completed
-<!-- Last 10-15 completed items for context -->
-```
+## Phase 2: Reconcile State
 
-## Step 2: Reconcile State
+PROGRESS.md might be stale. Sessions crash, users work outside Claude, other
+contributors push changes. Before acting on state, verify it.
 
-Compare PROGRESS.md against reality:
-- Check `git log` for commits not yet reflected in PROGRESS.md
-- Verify in-progress items are still relevant
-- Note any drift and correct it
+1. **Check git log since last known activity.** Compare recent commits against
+   what PROGRESS.md says is in progress and completed. If commits finished a
+   listed in-progress item, move it. If there's new work not reflected in
+   PROGRESS.md, add it.
 
-## Step 3: Execute
+2. **Verify in-progress items are real.** If something has been "in progress"
+   across multiple sessions with no corresponding commits, it's probably
+   stalled or abandoned. Flag it — don't silently carry it forward.
+
+3. **Check for branch divergence.** Unmerged branches with significant work?
+   Open PRs? This is context that affects what you should do next.
+
+4. **Update PROGRESS.md** with corrections. Keep them minimal and accurate —
+   this is bookkeeping, not a rewrite.
+
+## Phase 3: Execute
 
 $ARGUMENTS
 
-**If a task was provided:**
-1. Check feasibility — does this conflict with in-progress work? Are dependencies in place?
-2. If blockers exist, surface them and propose a path forward
-3. Plan the implementation approach
-4. Use the Task tool with TeamCreate to spin up agents for design and implementation
-5. Update PROGRESS.md as work progresses
+### If a task was given
 
-**If no task was provided:**
-1. Review planned and backlog items in PROGRESS.md
-2. Select the highest-priority actionable item (respect any weighting rules from CLAUDE.md)
-3. Execute it following the same process above
-4. If nothing is actionable, report current state and ask for direction
+Assess before acting:
 
-## Step 4: Update State
+- **Scope** — is this a focused change (one file, one function) or does it
+  touch multiple systems? This determines whether you work directly or plan.
+- **Conflicts** — does this interfere with anything in progress? If so, surface
+  the conflict and propose how to handle it.
+- **Dependencies** — does this need something that doesn't exist yet? Handle
+  the dependency first, or tell the user.
 
-After completing work, update `.claude/PROGRESS.md`:
-- Move completed items to Completed (keep last 10-15)
-- Update in-progress items with current status
-- Add any new items discovered during work
-- Ensure the document reflects the actual state of the project
+**For focused tasks** (clear scope, single concern): just do the work. Read
+the relevant code, make the change, verify it works. Don't over-plan and
+don't spin up teams for something you can do directly.
+
+**For larger tasks** (multiple files, multiple concerns, design decisions):
+plan the approach first. Break the work into concrete steps. If the task has
+genuinely independent workstreams (say, separate frontend and backend work),
+use the Task tool to spin up agents for parallel execution. But a task that
+touches 5 files sequentially doesn't need a team — the coordination overhead
+isn't worth it for anything you could do in a few minutes directly. When you
+do use teams, give each agent a specific, well-scoped assignment with clear
+success criteria.
+
+### If no task was given
+
+You're being asked "what's next?" — this is a judgment call.
+
+1. Review PROGRESS.md priorities. If the user has defined weights or ordering
+   rules in CLAUDE.md, respect them.
+2. Prefer items that are:
+   - Unblocked (no dependencies on incomplete work)
+   - Well-defined (you can start without extensive clarification)
+   - High-impact relative to effort
+3. If multiple items seem equally viable, pick one and explain why. Don't
+   present a menu unless the decision genuinely requires user input — product
+   direction choices need their input, technical sequencing choices don't.
+4. If nothing is actionable — everything blocked, unclear, or the backlog is
+   empty — say so plainly and ask for direction.
+
+## Phase 4: Update State
+
+After completing work (or making meaningful progress on longer tasks), update
+`.claude/PROGRESS.md`. This matters because the next session reads this file
+to understand where things stand. Inaccurate state wastes future time.
+
+- Move completed items to Completed (keep the last 10–15 for context)
+- Update in-progress items with honest status — "started" vs "mostly done,
+  needs tests" vs "blocked on X" are useful distinctions
+- Add newly discovered items to Planned or Backlog as appropriate
+- If you changed direction or discovered something unexpected, note it
+
+Follow the template structure in `references/progress-template.md`. Don't
+restructure the file or add new sections — consistency across sessions matters
+more than creativity here.
