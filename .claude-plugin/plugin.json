@@ -1,0 +1,22 @@
+{
+  "name": "auto-dev",
+  "version": "0.1.0",
+  "description": "Autonomous development loop — maintains project state, auto-commits at meaningful boundaries, and orchestrates task execution with team-based agents.",
+  "author": {
+    "name": "Steven Mosley",
+    "email": "stevengmjr@gmail.com"
+  },
+  "homepage": "https://github.com/astrosteveo/superclaude",
+  "repository": "https://github.com/astrosteveo/superclaude",
+  "license": "MIT",
+  "keywords": [
+    "autonomous",
+    "agents",
+    "development",
+    "orchestration",
+    "state-management",
+    "auto-commit"
+  ],
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks.json"
+}

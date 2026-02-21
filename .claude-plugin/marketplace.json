@@ -1,0 +1,29 @@
+{
+  "name": "auto-dev-dev",
+  "description": "[DEV] Autonomous development loop with project state management and task orchestration.",
+  "owner": {
+    "name": "Steven Mosley",
+    "email": "stevengmjr@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "auto-dev",
+      "description": "Autonomous development loop — maintains project state, auto-commits at meaningful boundaries, and orchestrates task execution with team-based agents.",
+      "source": "./",
+      "version": "0.1.0",
+      "author": {
+        "name": "Steven Mosley",
+        "email": "stevengmjr@gmail.com"
+      },
+      "license": "MIT",
+      "keywords": [
+        "autonomous",
+        "agents",
+        "development",
+        "orchestration",
+        "state-management"
+      ],
+      "category": "productivity"
+    }
+  ]
+}
