@@ -15,6 +15,18 @@ current focus area is. Update this each session — it's the first thing the
 next session reads. Write it like a handoff note: "This is a CLI tool for X.
 We're currently focused on adding Y. The main blocker is Z." -->
 
+## Architecture
+<!-- Brief project layout and key tech decisions. Helps agents ground their
+work without exploring the codebase. Skip for trivial projects.
+
+Example:
+src/           Express API routes and middleware
+lib/           Shared utilities, database client
+tests/         Jest tests — 42 cases, 6 suites
+
+Stack: TypeScript, Express, PostgreSQL, Redis for caching.
+-->
+
 ## In Progress
 <!-- Items actively being worked on. Each entry needs enough context that a
 new session can pick it up without re-investigating.
@@ -47,6 +59,17 @@ Format: - [description]
 Example:
 - Consider caching layer for expensive queries
 - Internationalization support
+-->
+
+## Known Issues
+<!-- Problems identified but not yet fixed. Include enough detail that a
+future session can act on them without re-diagnosing.
+
+Format: - [what's wrong] — [where, impact, potential fix direction]
+
+Example:
+- Response times spike above 500 concurrent users — connection pool maxes out, need pooling config or read replicas
+- Circular dependency between auth and user modules — causes test isolation issues
 -->
 
 ## Completed

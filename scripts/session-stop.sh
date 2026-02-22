@@ -13,25 +13,26 @@ if ! git rev-parse --is-inside-work-tree &>/dev/null; then
     exit 0
 fi
 
-# Skip if no changes exist
-if git diff --quiet && git diff --cached --quiet && [ -z "$(git ls-files --others --exclude-standard)" ]; then
+# Only stage plugin state — not the user's code.
+# The plugin owns .claude/ (including PROGRESS.md) and a root-level
+# PROGRESS.md if it hasn't been moved yet. Everything else belongs
+# to the user and should be committed intentionally.
+STAGED=false
+
+if [ -d ".claude" ]; then
+    git add .claude/ 2>/dev/null && STAGED=true
+fi
+
+# Catch PROGRESS.md at project root (pre-migration location)
+if [ -f "PROGRESS.md" ]; then
+    git add PROGRESS.md 2>/dev/null && STAGED=true
+fi
+
+# Skip if nothing was staged or staged files are unchanged
+if ! $STAGED || git diff --cached --quiet 2>/dev/null; then
     exit 0
 fi
 
-# Stage all changes
-git add -A
-
-# Build commit message from what changed
-CHANGED_FILES=$(git diff --cached --name-only)
-FILE_COUNT=$(echo "$CHANGED_FILES" | wc -l | tr -d ' ')
-FILE_LIST=$(echo "$CHANGED_FILES" | head -5 | tr '\n' ', ' | sed 's/,$//')
-
-if [ "$FILE_COUNT" -gt 5 ]; then
-    MSG="auto-dev: update ${FILE_COUNT} files (${FILE_LIST}, ...)"
-else
-    MSG="auto-dev: update ${FILE_LIST}"
-fi
-
-git commit -m "$MSG" 2>/dev/null || true
+git commit -m "auto-dev: session state" 2>/dev/null || true
 
 exit 0
