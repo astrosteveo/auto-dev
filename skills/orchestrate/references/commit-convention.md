@@ -6,13 +6,23 @@ Agents commit after each meaningful unit of work so progress is visible in
 ## Format
 
 ```
-auto-dev: <scope>: <description>
+<type>(<scope>): <description>
 ```
 
-- **scope** — short kebab-case token for the area of change (e.g., `utility-ai`,
-  `tests`, `build`, `world-cpp`)
+- **type** — what kind of change: `feature`, `fix`, `refactor`, `test`,
+  `chore`, `docs`
+- **scope** — short kebab-case token for the area of change (e.g.,
+  `camera-system`, `utility-ai`, `world-cpp`)
 - **description** — imperative mood, lowercase, no trailing period
 - Keep the full line under ~72 characters so `git log --oneline` stays readable
+
+Examples:
+```
+feature(utility-ai): add social memory consideration type
+refactor(world-cpp): replace apply_component with registry
+fix(camera-system): correct inverted X axis default
+test(pathfinding): add A* edge case coverage
+```
 
 ## When to Commit
 
@@ -37,14 +47,3 @@ especially when multiple agents work in parallel.
   preserves a rollback point.
 - **Parallel agents:** only stage and commit files you own. Never commit
   another agent's work.
-
-## Reserved Prefix
-
-`auto-dev: session state` is reserved for the session-stop hook. Agent commits
-always include a scope token after `auto-dev:`, so there is no overlap:
-
-```
-a1b2c3d auto-dev: utility-ai: add social memory consideration type
-d4e5f6g auto-dev: world-cpp: replace apply_component with registry
-h7i8j9k auto-dev: session state
-```

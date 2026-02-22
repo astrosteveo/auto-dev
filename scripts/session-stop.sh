@@ -33,6 +33,6 @@ if ! $STAGED || git diff --cached --quiet 2>/dev/null; then
     exit 0
 fi
 
-git commit -m "auto-dev: session state" 2>/dev/null || true
+git commit -m "chore(session): save state" 2>/dev/null || true
 
 exit 0

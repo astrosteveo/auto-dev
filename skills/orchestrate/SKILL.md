@@ -27,7 +27,7 @@ If found at root, move it to `.claude/` when you update it.
 **If PROGRESS.md exists:** verify against the injected git state. Flag stale
 in-progress items (listed across sessions with no corresponding commits).
 Make corrections — bookkeeping, not a rewrite. Agent work commits use the
-prefix `auto-dev: <scope>:` in git log — use these to verify progress claims.
+format `<type>(<scope>): <description>` in git log — use these to verify progress claims.
 
 **If no PROGRESS.md:** run `git log --oneline -20` and `git status`, then
 spin up a scout agent to explore the project. Use the scout's report + git
