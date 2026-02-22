@@ -1,68 +1,74 @@
 {
   "skill_name": "orchestrate",
+  "efficiency_notes": "The primary optimization target is orchestrator context consumption. Track total_tool_calls and transcript_chars as proxies for token usage. Team management calls (TeamCreate, Task, SendMessage, TaskCreate, TaskUpdate, TeamDelete) are orchestration overhead — for tier-1 tasks (orient/status), these should be zero.",
   "evals": [
     {
       "id": 1,
       "prompt": "What should I work on next?",
-      "expected_output": "Reads existing PROGRESS.md, reconciles against git history, selects the highest-priority actionable item, and describes the team it would spin up to do the work",
-      "files": [],
+      "expected_output": "Reads PROGRESS.md from injected context, verifies against git state, selects the highest-priority actionable item with reasoning, and responds directly without spinning up agents",
+      "files": ["files/injected_context.md"],
       "context": {
-        "project_dir": "/home/astrosteveo/Projects/working-title",
-        "has_progress_md": true,
-        "note": "Real C++ game engine project with existing PROGRESS.md at root (not .claude/), defined priorities, and rich git history. Only one item in Next Up but deferred items and a known issue also exist."
+        "note": "The input file 'injected_context.md' simulates what the SessionStart hook would inject — PROGRESS.md content and git state. The executor should treat this as pre-injected context (as if the hook already ran). The project directory does NOT need to exist on disk. The PROGRESS.md is noted as being at the project root, not .claude/.",
+        "efficiency_target": "This is a tier-1 (direct response) task. Zero team management calls expected. Total tool calls should be minimal — context is pre-staged in the input file."
       },
       "expectations": [
-        "Finds PROGRESS.md even though it's at the project root instead of .claude/PROGRESS.md",
-        "Checks git log to reconcile recent commits against PROGRESS.md state",
-        "Detects uncommitted changes via git status and accounts for them in its assessment",
-        "Does NOT read any source code files — only PROGRESS.md and git commands (log, status, diff, branch)",
-        "Selects a specific item to work on rather than presenting a menu of options",
-        "Explains why other candidate items were NOT selected (e.g., blocked, lower priority, dependencies)",
-        "Describes a team whose roles are clearly relevant to the selected task — not generic roles",
-        "Each proposed teammate has a detailed brief: what to do, which files to explore, success criteria",
+        "Uses the pre-staged injected_context.md as its primary information source rather than trying to find or read a project directory",
+        "Identifies that PROGRESS.md is at the project root instead of .claude/PROGRESS.md from the injected context",
+        "Uses the git state section of the injected context to verify PROGRESS.md — does NOT run git commands",
+        "Detects uncommitted changes from the injected git state and accounts for them in its assessment",
+        "Does NOT read any source code files — only the injected context",
+        "Selects a specific item to work on with clear reasoning for the choice",
+        "Responds directly — does NOT use TeamCreate, Task, or SendMessage (zero orchestration overhead for a status question)",
         "Does NOT write any code or edit any project files itself",
-        "Notes that PROGRESS.md should be moved to .claude/PROGRESS.md for SessionStart hook compatibility"
+        "Bash calls in metrics.json should be 0 — no shell commands needed when context is pre-injected",
+        "Glob calls in metrics.json should be 0 — no filesystem exploration needed for a status question with pre-staged context",
+        "All file names, commit SHAs, priority scores, and counts in the response match the injected_context.md exactly — no hallucinated details"
       ]
     },
     {
       "id": 2,
       "prompt": "Pick up this project and figure out what's going on",
-      "expected_output": "Orients to the project by reading PROGRESS.md and git history, provides a synthesis that goes beyond restating PROGRESS.md, identifies what's actionable vs blocked",
-      "files": [],
+      "expected_output": "Orients from injected PROGRESS.md and git state, provides synthesis that goes beyond restating PROGRESS.md, categorizes items as actionable vs blocked, responds directly",
+      "files": ["files/injected_context.md"],
       "context": {
-        "project_dir": "/home/astrosteveo/Projects/working-title",
-        "has_progress_md": true,
-        "note": "Real C++ game engine project with existing PROGRESS.md at root. Has uncommitted test files from a previous session."
+        "note": "The input file 'injected_context.md' simulates what the SessionStart hook would inject — PROGRESS.md content and git state. The executor should treat this as pre-injected context. The project directory does NOT need to exist on disk. Note the uncommitted test files in the working tree section.",
+        "efficiency_target": "This is a tier-1 (direct response) task. Zero team management calls expected. Context is pre-staged — minimal additional tool calls needed."
       },
       "expectations": [
-        "Finds PROGRESS.md at the project root and uses it as the primary source of project state",
-        "Checks git log AND git status to build a complete picture of current state",
-        "Surfaces the uncommitted changes from the previous session as something that needs attention",
-        "Does NOT read any source code files — only PROGRESS.md and git commands (log, status, diff, branch)",
-        "Provides original analysis that synthesizes PROGRESS.md content rather than just restating it (e.g., connecting related items, identifying patterns, noting trajectory)",
-        "Explicitly categorizes items into actionable-now vs blocked/deferred with specific reasons for each",
+        "Uses the pre-staged injected_context.md as its primary information source rather than trying to find or read a project directory",
+        "Uses the git state from the injected context to build a complete picture without running git commands",
+        "Surfaces uncommitted changes from the injected context as needing attention",
+        "Does NOT read any source code files — only the injected context",
+        "Provides original analysis that synthesizes PROGRESS.md content rather than restating it (connecting related items, identifying patterns, noting trajectory)",
+        "Categorizes items into actionable-now vs blocked/deferred with specific reasons",
+        "Responds directly — does NOT use TeamCreate, Task, or SendMessage (zero orchestration overhead for an orientation question)",
         "Does NOT write any code or edit any project files itself",
-        "Notes the PROGRESS.md path mismatch with the skill's expected .claude/ location"
+        "Notes the PROGRESS.md path mismatch with the expected .claude/ location",
+        "Bash calls in metrics.json should be 0 — no shell commands needed when context is pre-injected",
+        "Glob calls in metrics.json should be 0 — no filesystem exploration needed for an orientation question with pre-staged context",
+        "All file names, commit SHAs, priority scores, and counts in the response match the injected_context.md exactly — no hallucinated details"
       ]
     },
     {
       "id": 3,
       "prompt": "Review the known issues section and propose a fix for the hardcoded apply_component() chain in world.cpp",
-      "expected_output": "Identifies the known issue from PROGRESS.md (without reading world.cpp itself), designs a team with task-specific agent personalities to explore the code and implement the fix",
-      "files": [],
+      "expected_output": "Identifies the known issue from PROGRESS.md, then delegates exploration and implementation to an appropriately-scoped agent rather than reading source code itself",
+      "files": ["files/injected_context.md"],
       "context": {
-        "project_dir": "/home/astrosteveo/Projects/working-title",
-        "has_progress_md": true,
-        "note": "Known issue: World::apply_component() in world.cpp:83-204 is a hardcoded if/else chain. Project uses C++20, Flecs ECS, data-driven design."
+        "note": "The input file 'injected_context.md' simulates what the SessionStart hook would inject — PROGRESS.md content and git state. The executor should treat this as pre-injected context. The project directory does NOT need to exist on disk. The known issue about apply_component() is in the PROGRESS.md content.",
+        "efficiency_target": "This is a tier-2 (single agent) or tier-3 (team) task. Some orchestration overhead expected, but the orchestrator should orient quickly from injected context then delegate."
       },
       "expectations": [
-        "Reads PROGRESS.md and identifies the known issue about apply_component()",
-        "Does NOT read world.cpp or any other source files — uses the known issue description from PROGRESS.md as context for the team brief",
-        "Designs a team plan (TeamCreate or describes the team it would create) that delegates BOTH exploration and implementation to teammates",
-        "Agent personalities are task-specific and relevant to a refactoring task — not generic roles like 'agent-1' or 'worker'",
-        "Teammate briefs include context from PROGRESS.md (known issue details, project patterns) and instruct teammates to explore the code themselves",
-        "The proposed team structure makes sense for the task — e.g., someone to understand the existing code, someone to implement, someone to verify",
-        "Does NOT write, edit, or modify any project source files directly"
+        "Uses the pre-staged injected_context.md to identify the known issue about apply_component()",
+        "Does NOT read world.cpp or any other source files — uses the known issue description from the injected context for the agent brief",
+        "Delegates the work to an agent (single Task agent or team depending on complexity assessment)",
+        "The agent brief includes relevant context from the injected PROGRESS.md (known issue details, project patterns)",
+        "Agent brief includes verifiable success criteria — not just a task description but concrete conditions that define 'done'",
+        "Agent roles are task-specific — not generic names like 'agent-1' or 'worker'",
+        "Scales execution appropriately — a single refactoring task should not require a full team unless there are genuinely independent workstreams",
+        "Does NOT write, edit, or modify any project source files directly",
+        "Orchestrator's own tool calls before delegation are minimal — orients from injected context, not by exploring the codebase",
+        "Glob and Grep calls in metrics.json should be 0 — orchestrator should not explore the codebase, only the injected context"
       ]
     }
   ]
