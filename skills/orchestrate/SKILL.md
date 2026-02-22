@@ -91,6 +91,11 @@ Assess before acting:
 - **Dependencies** — does this need something that doesn't exist yet? Handle
   the dependency first, or tell the user.
 
+**If you discover bugs during assessment:** decide whether they block your
+current task. If a bug blocks what you're about to do, fix it first — it's a
+prerequisite, not a detour. If it doesn't block you, log it in PROGRESS.md's
+Known Issues section and move on. A future session will see it and pick it up.
+
 **For focused tasks** (clear scope, single concern): just do the work. Read
 the relevant code, make the change, verify it works. Don't over-plan and
 don't spin up teams for something you can do directly.
@@ -114,10 +119,13 @@ You're being asked "what's next?" — this is a judgment call.
    - Unblocked (no dependencies on incomplete work)
    - Well-defined (you can start without extensive clarification)
    - High-impact relative to effort
-3. If multiple items seem equally viable, pick one and explain why. Don't
+3. When presenting your recommendation, briefly explain why other items
+   *aren't* the pick — "deferred because it depends on X" or "blocked until
+   Y lands" helps the user understand the full landscape, not just your choice.
+4. If multiple items seem equally viable, pick one and explain why. Don't
    present a menu unless the decision genuinely requires user input — product
    direction choices need their input, technical sequencing choices don't.
-4. If nothing is actionable — everything blocked, unclear, or the backlog is
+5. If nothing is actionable — everything blocked, unclear, or the backlog is
    empty — say so plainly and ask for direction.
 
 ## Phase 4: Update State
