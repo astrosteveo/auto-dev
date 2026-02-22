@@ -26,7 +26,8 @@ If found at root, move it to `.claude/` when you update it.
 
 **If PROGRESS.md exists:** verify against the injected git state. Flag stale
 in-progress items (listed across sessions with no corresponding commits).
-Make corrections — bookkeeping, not a rewrite.
+Make corrections — bookkeeping, not a rewrite. Agent work commits use the
+prefix `auto-dev: <scope>:` in git log — use these to verify progress claims.
 
 **If no PROGRESS.md:** run `git log --oneline -20` and `git status`, then
 spin up a scout agent to explore the project. Use the scout's report + git
@@ -61,6 +62,9 @@ independent concerns: use TeamCreate. Name the team after the work. Design
 roles that match the task. Give each agent PROGRESS.md context and clear
 scope.
 
+All agent briefs must include: "Commit after each logical unit of work per
+`references/commit-convention.md`."
+
 ## Step 4: Update State
 
 Update `.claude/PROGRESS.md`:
@@ -69,5 +73,6 @@ Update `.claude/PROGRESS.md`:
 - Update in-progress items honestly
 - Add newly discovered items to Planned or Backlog
 - Note anything unexpected
+- Verify agent commits appeared (check git log if in doubt)
 
 Follow `references/progress-template.md`.

@@ -68,7 +68,8 @@
         "Scales execution appropriately — a single refactoring task should not require a full team unless there are genuinely independent workstreams",
         "Does NOT write, edit, or modify any project source files directly",
         "Orchestrator's own tool calls before delegation are minimal — orients from injected context, not by exploring the codebase",
-        "Glob and Grep calls in metrics.json should be 0 — orchestrator should not explore the codebase, only the injected context"
+        "Glob and Grep calls in metrics.json should be 0 — orchestrator should not explore the codebase, only the injected context",
+        "The agent brief includes an instruction to commit work per the commit convention"
       ]
     }
   ]
