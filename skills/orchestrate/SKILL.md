@@ -62,6 +62,14 @@ independent concerns: use TeamCreate. Name the team after the work. Design
 roles that match the task. Give each agent PROGRESS.md context and clear
 scope.
 
+**CRITICAL: Always background agents.** Every Task tool call MUST set
+`run_in_background: true`. Blocking agents freeze the main conversation —
+the user cannot send messages until a blocking agent finishes, which defeats
+the purpose of delegation. After launching, immediately tell the user what
+was dispatched and that they can continue chatting. Use TaskOutput (with
+`block: false`) to check on agent progress when the user asks or when you
+need results for the next step.
+
 All agent briefs must include: "Commit after each logical unit of work per
 `references/commit-convention.md`."
 
