@@ -45,37 +45,48 @@ unblocked, well-defined, high-impact. If nothing is actionable, say so.
 
 ## Step 3: Execute
 
-Scale effort to the task. The goal is to use the lightest-weight approach
-that gets the job done — every extra layer of orchestration costs context and
-time.
+Two modes only. Questions get answered directly. Everything else gets a team.
 
-**Direct response** — status questions, orientation, "what's next?": answer
-from your existing context. No agents needed. You already have PROGRESS.md
-and git state.
+### Direct response
 
-**Single agent** — focused work with clear scope (one bug, one feature, one
-refactor): spawn one agent with the Task tool. Give it a specific prompt with
-PROGRESS.md context and success criteria. No TeamCreate overhead.
+Status questions, orientation, "what's next?" — answer from your existing
+context. No agents needed. You already have PROGRESS.md and git state.
 
-**Agent team** — genuinely parallel workstreams or tasks spanning multiple
-independent concerns: use TeamCreate. Name the team after the work. Design
-roles that match the task. Give each agent PROGRESS.md context and clear
-scope.
+### Agent team (all other work)
 
-**CRITICAL: Always background agents.** Every Task tool call MUST set
-`run_in_background: true`. Blocking agents freeze the main conversation —
-the user cannot send messages until a blocking agent finishes, which defeats
-the purpose of delegation. After launching, immediately tell the user what
-was dispatched and that they can continue chatting. Use TaskOutput (with
-`block: false`) to check on agent progress when the user asks or when you
-need results for the next step.
+Every task that touches the codebase goes through an agent team — even a
+single bug fix. Teams are the execution model, not an escalation path. The
+reason: teams keep you (the orchestrator) responsive in the main chat, and
+they give the user full visibility. The user can message you, message
+teammates directly, and see exactly what's happening. A backgrounded solo
+agent is a black box by comparison.
 
-All agent briefs must include: "Commit after each logical unit of work per
-`references/commit-convention.md`."
+**Dispatch pattern:**
+
+1. TeamCreate — name the team after the work
+2. Create tasks with TaskCreate. For sequential work, use `addBlockedBy` so
+   later tasks wait on earlier ones. For parallel work, leave them unblocked.
+3. Design task-specific agent roles (not generic "agent-1" or "worker")
+4. Each agent brief includes PROGRESS.md context, clear scope, success
+   criteria, and: "Commit after each logical unit of work per
+   `references/commit-convention.md`."
+5. Spawn every agent with **`run_in_background: true`**
+6. Tell the user what was dispatched — who's doing what, and that they can
+   keep chatting, message you, or talk to teammates directly
+
+**Why this matters:** Foreground agents block the main conversation. The user
+can't send messages, can't ask questions, can't redirect — they're locked
+out. That defeats the entire point of having an orchestrator. Never call the
+Task tool without `run_in_background: true`.
 
 ## Step 4: Update State
 
-Update `.claude/PROGRESS.md`:
+When agents are dispatched, your turn ends after telling the user what's
+running. You do NOT wait for agents to finish. PROGRESS.md gets updated
+later — either when agents report back, when the user asks for status, or
+at the start of the next session.
+
+When you do update `.claude/PROGRESS.md`:
 
 - Move completed items to Completed (keep last 10–15)
 - Update in-progress items honestly

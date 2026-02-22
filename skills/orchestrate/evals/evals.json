@@ -56,16 +56,18 @@
       "files": ["files/injected_context.md"],
       "context": {
         "note": "The input file 'injected_context.md' simulates what the SessionStart hook would inject — PROGRESS.md content and git state. The executor should treat this as pre-injected context. The project directory does NOT need to exist on disk. The known issue about apply_component() is in the PROGRESS.md content.",
-        "efficiency_target": "This is a tier-2 (single agent) or tier-3 (team) task. Some orchestration overhead expected, but the orchestrator should orient quickly from injected context then delegate."
+        "efficiency_target": "This is a delegation task — the orchestrator should create an agent team. Some orchestration overhead expected (TeamCreate, TaskCreate, Task calls), but the orchestrator should orient quickly from injected context then delegate."
       },
       "expectations": [
         "Uses the pre-staged injected_context.md to identify the known issue about apply_component()",
         "Does NOT read world.cpp or any other source files — uses the known issue description from the injected context for the agent brief",
-        "Delegates the work to an agent (single Task agent or team depending on complexity assessment)",
+        "Creates an agent team using TeamCreate — does NOT use a standalone Task agent without a team",
+        "Creates tasks with TaskCreate that include clear scope and success criteria",
         "The agent brief includes relevant context from the injected PROGRESS.md (known issue details, project patterns)",
         "Agent brief includes verifiable success criteria — not just a task description but concrete conditions that define 'done'",
         "Agent roles are task-specific — not generic names like 'agent-1' or 'worker'",
-        "Scales execution appropriately — a single refactoring task should not require a full team unless there are genuinely independent workstreams",
+        "Every Task tool call uses run_in_background: true — no foreground agents that block the main conversation",
+        "After dispatching agents, the orchestrator tells the user what was launched, who's doing what, and that they can keep chatting or message teammates",
         "Does NOT write, edit, or modify any project source files directly",
         "Orchestrator's own tool calls before delegation are minimal — orients from injected context, not by exploring the codebase",
         "Glob and Grep calls in metrics.json should be 0 — orchestrator should not explore the codebase, only the injected context",
