@@ -1,0 +1,136 @@
+{
+  "expectations": [
+    {
+      "text": "Finds PROGRESS.md at the project root and uses it as the primary source of project state",
+      "passed": true,
+      "evidence": "Step 1 explicitly documents: 'Checked for PROGRESS.md in both canonical locations per skill instructions. Read /home/astrosteveo/Projects/working-title/.claude/PROGRESS.md — not found. Read /home/astrosteveo/Projects/working-title/PROGRESS.md — found.' The entire subsequent analysis (architecture, completed items, next up, deferred, known issues) derives from this file's content."
+    },
+    {
+      "text": "Checks git log AND git status to build a complete picture of current state",
+      "passed": true,
+      "evidence": "Step 3 documents: 'Checked git log, git status, git diff, and git branch to reconcile PROGRESS.md with actual project state.' Specific commands listed: 'git log --oneline -20', 'git status', 'git diff --stat', 'git diff PROGRESS.md', 'git diff tests/CMakeLists.txt', 'git branch -a', 'git log --format=\"%h %ai %s\" -10'. Both git log and git status are present, plus additional git commands for thoroughness."
+    },
+    {
+      "text": "Surfaces the uncommitted changes from the previous session as something that needs attention",
+      "passed": true,
+      "evidence": "Step 3 lists all uncommitted changes under 'Result — Uncommitted changes' (modified PROGRESS.md, modified tests/CMakeLists.txt, 5 new untracked test files). Step 6 escalates this: 'Immediate issue: There are uncommitted changes from the last session — 5 new test files, an updated CMakeLists.txt, and an updated PROGRESS.md. These should be committed before starting new work.' The Issues section reiterates: 'Uncommitted changes exist from the last session (test expansion). These appear to be completed work that wasn't committed before the session ended.'"
+    },
+    {
+      "text": "Provides original analysis that synthesizes PROGRESS.md content rather than just restating it (e.g., connecting related items, identifying patterns, noting the project's development trajectory)",
+      "passed": true,
+      "evidence": "Multiple instances of synthesis beyond restating: (1) Step 3 analyzes git log timestamps to identify development velocity: 'All 10 commits are from 2026-02-20 (yesterday), spanning ~50 minutes of rapid development (20:08 to 20:56).' (2) Step 3 reconciles PROGRESS.md against git reality: 'PROGRESS.md's Completed section in the uncommitted version accurately reflects all committed work.' (3) Step 5 connects social system implementation across files to assess next-task readiness: 'The social system already creates social_interaction memory entries; the work is adding a social_memory consideration type to utility_ai.cpp.' (4) Step 6 provides original reasoning about prioritization, including identifying a design dependency not explicit in PROGRESS.md: 'save/load system deferred because it requires solving the Flecs runtime entity ID stability problem first (need persistent UUID component or ID mapping).' (5) User notes identify a potential prerequisite bug: memory entries have tick=0, which would affect recency-weighted scoring."
+    },
+    {
+      "text": "Explicitly categorizes items into actionable-now vs blocked/deferred with reasons for each",
+      "passed": true,
+      "evidence": "Step 6 provides explicit categorization with reasons: Actionable now — 'Social memory AI decisions... Well-defined, unblocked, builds on completed infrastructure' with explanation of why it's ready ('depends on memory-informed AI which is completed'). Deferred with reasons — 'Building/placement system deferred due to scope (new systems, templates, validation)' and 'save/load system deferred due to unresolved Flecs entity ID stability design problem.' Tech debt categorized separately — 'apply_component() if/else chain... not blocking any current work.' Uncommitted work categorized as immediate prerequisite: 'should be committed before starting new work.' The Final Result mirrors this structure."
+    },
+    {
+      "text": "Notes the PROGRESS.md path mismatch with the skill's expected .claude/ location",
+      "passed": true,
+      "evidence": "Noted in three separate locations: (1) Step 1: 'PROGRESS.md exists at the project root (not in .claude/). The skill says: If you find it at the root, use it — but when you next update it, move it to .claude/PROGRESS.md so the SessionStart hook can find it in future sessions.' (2) Step 7: lists 'Move PROGRESS.md to .claude/PROGRESS.md' as an action item. (3) Final Result: 'PROGRESS.md location: Found at project root; should be moved to .claude/PROGRESS.md on next update.' (4) Issues section: 'PROGRESS.md is at the project root rather than .claude/PROGRESS.md — the SessionStart hook won't auto-inject it.'"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Read": 7,
+      "Write": 3,
+      "Bash": 14,
+      "Edit": 0,
+      "Glob": 0,
+      "Grep": 0
+    },
+    "total_tool_calls": 24,
+    "total_steps": 7,
+    "errors_encountered": 0,
+    "output_chars": 15289,
+    "transcript_chars": 12322
+  },
+  "timing": null,
+  "claims": [
+    {
+      "claim": "PROGRESS.md was checked in both .claude/ and root locations",
+      "type": "process",
+      "verified": true,
+      "evidence": "Step 1 documents checking both paths explicitly, with .claude/PROGRESS.md not found and root PROGRESS.md found."
+    },
+    {
+      "claim": "The project has 10 commits spanning ~50 minutes of development on 2026-02-20",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Step 3 lists 'git log --format=\"%h %ai %s\" -10' as a tool call and reports '10 commits... from 2026-02-20 (yesterday), spanning ~50 minutes of rapid development (20:08 to 20:56).' This is verifiable from the git log output."
+    },
+    {
+      "claim": "There are 5 uncommitted new test files plus modified PROGRESS.md and tests/CMakeLists.txt",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Step 3 'Result — Uncommitted changes' lists all 7 items. Git status output would confirm this. The specific filenames are listed: test_clock.cpp, test_data_registry.cpp, test_pathfinding.cpp, test_tile_map.cpp, test_utility_ai.cpp."
+    },
+    {
+      "claim": "apply_component() in world.cpp is a 123-line if/else chain dispatching 12 component types",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Step 4 states it read world.cpp and found 'apply_component() (lines 82-205) is a 123-line if/else chain dispatching 12 component types by string name.' The tool call to Read world.cpp is documented."
+    },
+    {
+      "claim": "Social memory AI decisions is 'well-scoped and unblocked'",
+      "type": "quality",
+      "verified": true,
+      "evidence": "Step 5 shows the executor read social_system.cpp and social_actions.json, then identified the specific integration point: 'extend the existing evaluate_consideration() in utility_ai.cpp to add a social_memory consideration type.' The reasoning chain — memories already being stored, missing piece is AI using them — is supported by the code analysis."
+    },
+    {
+      "claim": "The save/load system has an unresolved Flecs entity ID stability design dependency",
+      "type": "factual",
+      "verified": false,
+      "evidence": "This claim is made in Step 6 ('requires solving the Flecs runtime entity ID stability problem first (need persistent UUID component or ID mapping)') but the transcript does not show where this information came from. It is not attributed to PROGRESS.md content or any file that was read. It may be accurate domain knowledge about Flecs ECS, but it cannot be verified from the available outputs."
+    },
+    {
+      "claim": "No .claude/ directory exists in the project",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Step 2: 'No README.md, no CLAUDE.md, no .claude/ directory.' Step 1 confirms .claude/PROGRESS.md was not found."
+    },
+    {
+      "claim": "The project uses C++20 with cmake 3.24",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Step 2 documents reading CMakeLists.txt and finding 'C++20, cmake 3.24'."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [
+      "PROGRESS.md scoring formula (I:X U:Y E:Z = score) is not documented — interpretation as higher=better-priority is assumed",
+      "Social system memory entries have tick=0, which may affect recency-weighted scoring in the planned social memory feature — potential prerequisite fix needed",
+      "Deferred section numbering starts at 3, suggesting renumbering artifacts"
+    ],
+    "needs_review": [
+      "Uncommitted test files (5) were not read during eval — quality and correctness unverified",
+      "Deferred item prioritization should be confirmed by user"
+    ],
+    "workarounds": [
+      "Read-only eval — all write actions (commit, move PROGRESS.md, update state) documented as hypothetical",
+      "Output directory path brace mismatch resolved by using the non-braced path"
+    ]
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "Provides original analysis that synthesizes PROGRESS.md content rather than just restating it",
+        "reason": "This is the strongest assertion in the set — it genuinely discriminates between a skill that parrot-quotes PROGRESS.md and one that does real work. However, it could be even more discriminating by specifying a minimum number of cross-file connections (e.g., 'connects at least 2 PROGRESS.md items to actual source code findings'). As written, a single novel observation could technically satisfy it."
+      },
+      {
+        "reason": "No assertion checks whether the executor verified PROGRESS.md accuracy against the actual codebase. This execution did verify (Step 3 reconciles PROGRESS.md Completed items against git commits, Step 4 confirms the known issue in world.cpp), which is a high-value behavior worth asserting. A weaker execution could accept PROGRESS.md at face value and still pass all 6 expectations."
+      },
+      {
+        "reason": "No assertion checks the quality of the 'what to do next' recommendation. The execution provided a well-reasoned recommendation with specific implementation guidance (which file to modify, what to add), but an output that simply restated 'Social memory AI decisions is next because it has score 2.33' would also pass expectation 5. Consider adding: 'Recommends a specific next action with justification beyond just citing the priority score.'"
+      }
+    ],
+    "overall": "Strong assertion set overall. All 6 expectations test substantive behaviors and the synthesis assertion (4) is particularly good at discriminating quality. The main gap is that no assertion verifies PROGRESS.md accuracy against the actual repo, which is one of the most valuable things this execution did."
+  }
+}
